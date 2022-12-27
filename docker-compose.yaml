@@ -44,7 +44,7 @@ services:
       JWT_TOKEN_EXPIRATION_TIME: ${JWT_TOKEN_EXPIRATION_TIME}
       USER_PASSWORD_SALT: ${USER_PASSWORD_SALT}
     ports:
-      - "8080:8080"
+      - "${APP_PORT}:${APP_PORT}"
     restart: on-failure
     depends_on:
       - postgres
