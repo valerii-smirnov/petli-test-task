@@ -1,0 +1,51 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14.6-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PETLY_DB_USER: ${PETLY_DB_USER}
+      PETLY_DB_USER_PASSWORD: ${PETLY_DB_USER_PASSWORD}
+      PETLY_DB_NAME: ${PETLY_DB_NAME}
+    restart: on-failure
+
+  migrations:
+    container_name: migrations
+    image: migrate/migrate
+    volumes:
+      - ./docker/migrations:/migrations
+    command:
+      - -path
+      - /migrations
+      - -database
+      - postgresql://${PETLY_DB_USER}:${PETLY_DB_USER_PASSWORD}@postgres:5432/${PETLY_DB_NAME}?sslmode=disable
+      - up
+    restart: on-failure
+    depends_on:
+      - postgres
+
+  petly-app:
+    container_name: petly-app
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    environment:
+      PORT: ${APP_PORT}
+      DB_PORT: 5432
+      DB_HOST: postgres
+      DB_USER: ${PETLY_DB_USER}
+      DB_PASS: ${PETLY_DB_USER_PASSWORD}
+      DB_NAME: ${PETLY_DB_NAME}
+      JWT_TOKEN_SECRET: ${JWT_TOKEN_SECRET}
+      JWT_TOKEN_EXPIRATION_TIME: ${JWT_TOKEN_EXPIRATION_TIME}
+      USER_PASSWORD_SALT: ${USER_PASSWORD_SALT}
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    depends_on:
+      - postgres
+      - migrations

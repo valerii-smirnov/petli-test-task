@@ -1,0 +1,490 @@
+basePath: /api/
+definitions:
+  messages.BadRequestError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        example: validation error
+        type: string
+    type: object
+  messages.ConflictError:
+    properties:
+      code:
+        example: 409
+        type: integer
+      message:
+        example: dog already exists
+        type: string
+    type: object
+  messages.CreateOrUpdateDogRequestBody:
+    properties:
+      age:
+        example: 5
+        maximum: 30
+        minimum: 0
+        type: integer
+      breed:
+        example: Bulldog
+        maxLength: 30
+        type: string
+      image:
+        example: https://cdn.w600.comps.canstockphoto.com/shepherd-cartoon-dog-vector-clipart_csp67503106.jpg
+        maxLength: 1024
+        type: string
+      name:
+        example: Spike
+        maxLength: 30
+        minLength: 3
+        type: string
+      sex:
+        enum:
+        - male
+        - female
+        example: male|female
+        type: string
+    required:
+    - age
+    - breed
+    - image
+    - name
+    - sex
+    type: object
+  messages.DogResponseBody:
+    properties:
+      age:
+        example: 5
+        type: integer
+      breed:
+        example: Bulldog
+        type: string
+      id:
+        example: c23bca5a-640a-4f61-bb7b-5f69b1ede69d
+        type: string
+      image:
+        example: https://cdn.w600.comps.canstockphoto.com/shepherd-cartoon-dog-vector-clipart_csp67503106.jpg
+        type: string
+      name:
+        example: Spike
+        type: string
+      sex:
+        example: male|female
+        type: string
+    type: object
+  messages.InternalServerError:
+    properties:
+      code:
+        example: 500
+        type: integer
+      error:
+        example: error message
+        type: string
+      message:
+        example: something went wrong
+        type: string
+    type: object
+  messages.NotFoundError:
+    properties:
+      code:
+        example: 404
+        type: integer
+      message:
+        example: dog not found
+        type: string
+    type: object
+  messages.ReactionRequestBody:
+    properties:
+      action:
+        enum:
+        - like
+        - dislike
+        example: like|dislike
+        type: string
+      liked:
+        example: c23bca5a-640a-4f61-bb7b-5f69b1ede69d
+        type: string
+      liker:
+        example: c23bca5a-640a-4f61-bb7b-5f69b1ede69d
+        type: string
+    required:
+    - action
+    - liked
+    - liker
+    type: object
+  messages.SignInRequestBody:
+    properties:
+      email:
+        example: your@email.com
+        type: string
+      password:
+        example: yousupersecretpassword
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  messages.SignInResponseBody:
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzIxODY4MDUsImlhdCI6MTY3MjEwMDQwNSwianRpIjoiMjkyNWRlYjItNDljMi00NTdjLWJmN2UtZWM4N2UyYzhhOTRhIiwidXNlci1pZCI6IjhkZDZjOGJiLTg2YmMtNDVhOC1iNzhmLThkZTQxMWEzZWJlMyJ9.qF5Gye0jAkmXMvJKLCCUjFWJVjuM3C3-L4eQkEZTf3Q
+        type: string
+    type: object
+  messages.SignUpRequestBody:
+    properties:
+      email:
+        example: your@email.com
+        type: string
+      password:
+        example: yousupersecretpassword
+        type: string
+    required:
+    - email
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: smirnov.valeriy90@gmail.com
+    name: Valerii Smirnov
+  description: Petly app endpoints description.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Petly App API
+  version: "1.0"
+paths:
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: User login endpoint
+      operationId: Login user
+      parameters:
+      - description: sign in info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/messages.SignInRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/messages.SignInResponseBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/messages.NotFoundError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      summary: User login
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: User registration endpoint
+      operationId: Create user
+      parameters:
+      - description: sign up info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/messages.SignUpRequestBody'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/messages.ConflictError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      summary: User registration
+      tags:
+      - auth
+  /dog:
+    get:
+      consumes:
+      - application/json
+      description: Getting dogs list
+      parameters:
+      - description: pagination page number
+        in: query
+        name: page
+        type: string
+      - description: pagination per page items number
+        in: query
+        name: per-page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/messages.DogResponseBody'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Dogs list
+      tags:
+      - dogs
+    post:
+      consumes:
+      - application/json
+      description: Creates new dog
+      parameters:
+      - description: dog object body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/messages.CreateOrUpdateDogRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/messages.DogResponseBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Create dog
+      tags:
+      - dogs
+  /dog/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Updates existing dog
+      parameters:
+      - description: dog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/messages.NotFoundError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Dog update
+      tags:
+      - dogs
+    get:
+      consumes:
+      - application/json
+      description: Getting dogs list
+      parameters:
+      - description: dog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/messages.DogResponseBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/messages.NotFoundError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Dogs list
+      tags:
+      - dogs
+    put:
+      consumes:
+      - application/json
+      description: Updates existing dog
+      parameters:
+      - description: dog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: dog object body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/messages.CreateOrUpdateDogRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/messages.DogResponseBody'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/messages.NotFoundError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Dog update
+      tags:
+      - dogs
+  /dog/{id}/matches:
+    get:
+      consumes:
+      - application/json
+      description: Getting dog matches with another dogs
+      parameters:
+      - description: dog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: pagination page number
+        in: query
+        name: page
+        type: string
+      - description: pagination per page items number
+        in: query
+        name: per-page
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/messages.DogResponseBody'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/messages.NotFoundError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Dog matches
+      tags:
+      - dogs
+  /dog/reaction:
+    post:
+      consumes:
+      - application/json
+      description: React to another dog
+      parameters:
+      - description: reaction body
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/messages.ReactionRequestBody'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/messages.BadRequestError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/messages.NotFoundError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/messages.InternalServerError'
+      security:
+      - ApiKeyAuth: []
+      summary: Reaction
+      tags:
+      - dogs
+securityDefinitions:
+  ApiKeyAuth:
+    description: As value you have to use string Bearer + 'received token after sign-in
+      action'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

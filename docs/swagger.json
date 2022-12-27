@@ -1,0 +1,733 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Petly app endpoints description.",
+        "title": "Swagger Petly App API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Valerii Smirnov",
+            "email": "smirnov.valeriy90@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/",
+    "paths": {
+        "/auth/sign-in": {
+            "post": {
+                "description": "User login endpoint",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "operationId": "Login user",
+                "parameters": [
+                    {
+                        "description": "sign in info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/messages.SignInRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/messages.SignInResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/messages.NotFoundError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/sign-up": {
+            "post": {
+                "description": "User registration endpoint",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User registration",
+                "operationId": "Create user",
+                "parameters": [
+                    {
+                        "description": "sign up info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/messages.SignUpRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/messages.ConflictError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/dog": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Getting dogs list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Dogs list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "pagination page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "pagination per page items number",
+                        "name": "per-page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/messages.DogResponseBody"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Creates new dog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Create dog",
+                "parameters": [
+                    {
+                        "description": "dog object body",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/messages.CreateOrUpdateDogRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/messages.DogResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/dog/reaction": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "React to another dog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Reaction",
+                "parameters": [
+                    {
+                        "description": "reaction body",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/messages.ReactionRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/messages.NotFoundError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/dog/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Getting dogs list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Dogs list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/messages.DogResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/messages.NotFoundError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Updates existing dog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Dog update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "dog object body",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/messages.CreateOrUpdateDogRequestBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/messages.DogResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/messages.NotFoundError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Updates existing dog",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Dog update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/messages.NotFoundError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/dog/{id}/matches": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Getting dog matches with another dogs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dogs"
+                ],
+                "summary": "Dog matches",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dog ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "pagination page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "pagination per page items number",
+                        "name": "per-page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/messages.DogResponseBody"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/messages.BadRequestError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/messages.NotFoundError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/messages.InternalServerError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "messages.BadRequestError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "validation error"
+                }
+            }
+        },
+        "messages.ConflictError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 409
+                },
+                "message": {
+                    "type": "string",
+                    "example": "dog already exists"
+                }
+            }
+        },
+        "messages.CreateOrUpdateDogRequestBody": {
+            "type": "object",
+            "required": [
+                "age",
+                "breed",
+                "image",
+                "name",
+                "sex"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "maximum": 30,
+                    "minimum": 0,
+                    "example": 5
+                },
+                "breed": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "example": "Bulldog"
+                },
+                "image": {
+                    "type": "string",
+                    "maxLength": 1024,
+                    "example": "https://cdn.w600.comps.canstockphoto.com/shepherd-cartoon-dog-vector-clipart_csp67503106.jpg"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 3,
+                    "example": "Spike"
+                },
+                "sex": {
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female"
+                    ],
+                    "example": "male|female"
+                }
+            }
+        },
+        "messages.DogResponseBody": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "breed": {
+                    "type": "string",
+                    "example": "Bulldog"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "c23bca5a-640a-4f61-bb7b-5f69b1ede69d"
+                },
+                "image": {
+                    "type": "string",
+                    "example": "https://cdn.w600.comps.canstockphoto.com/shepherd-cartoon-dog-vector-clipart_csp67503106.jpg"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Spike"
+                },
+                "sex": {
+                    "type": "string",
+                    "example": "male|female"
+                }
+            }
+        },
+        "messages.InternalServerError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 500
+                },
+                "error": {
+                    "type": "string",
+                    "example": "error message"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "something went wrong"
+                }
+            }
+        },
+        "messages.NotFoundError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 404
+                },
+                "message": {
+                    "type": "string",
+                    "example": "dog not found"
+                }
+            }
+        },
+        "messages.ReactionRequestBody": {
+            "type": "object",
+            "required": [
+                "action",
+                "liked",
+                "liker"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "like",
+                        "dislike"
+                    ],
+                    "example": "like|dislike"
+                },
+                "liked": {
+                    "type": "string",
+                    "example": "c23bca5a-640a-4f61-bb7b-5f69b1ede69d"
+                },
+                "liker": {
+                    "type": "string",
+                    "example": "c23bca5a-640a-4f61-bb7b-5f69b1ede69d"
+                }
+            }
+        },
+        "messages.SignInRequestBody": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "your@email.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "yousupersecretpassword"
+                }
+            }
+        },
+        "messages.SignInResponseBody": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzIxODY4MDUsImlhdCI6MTY3MjEwMDQwNSwianRpIjoiMjkyNWRlYjItNDljMi00NTdjLWJmN2UtZWM4N2UyYzhhOTRhIiwidXNlci1pZCI6IjhkZDZjOGJiLTg2YmMtNDVhOC1iNzhmLThkZTQxMWEzZWJlMyJ9.qF5Gye0jAkmXMvJKLCCUjFWJVjuM3C3-L4eQkEZTf3Q"
+                }
+            }
+        },
+        "messages.SignUpRequestBody": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "your@email.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "yousupersecretpassword"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "As value you have to use string Bearer + 'received token after sign-in action'",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
