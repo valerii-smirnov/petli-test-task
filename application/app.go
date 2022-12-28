@@ -3,7 +3,6 @@ package application
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/valerii-smirnov/petli-test-task/pkg/utils/user"
 	"time"
 
 	"github.com/valerii-smirnov/petli-test-task/internal/adapters"
@@ -12,6 +11,7 @@ import (
 	"github.com/valerii-smirnov/petli-test-task/pkg/db/sqlx"
 	"github.com/valerii-smirnov/petli-test-task/pkg/hasher"
 	"github.com/valerii-smirnov/petli-test-task/pkg/token"
+	"github.com/valerii-smirnov/petli-test-task/pkg/utils/user"
 
 	"github.com/urfave/cli/v2"
 )
